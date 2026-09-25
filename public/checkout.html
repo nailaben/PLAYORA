@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الطلب | LogoName</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/store.css">
+    <style>
+        body {
+            padding-top: 0;
+        }
+
+        .checkout-page {
+            min-height: 100vh;
+            background: var(--bg);
+            padding: 0;
+        }
+
+        .checkout-header {
+            background: rgba(8, 8, 24, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .checkout-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .checkout-content {
+            padding: 3rem 0 5rem;
+        }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .checkout-form-card,
+        .order-summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+        }
+
+        .checkout-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkout-section-title .material-symbols-outlined {
+            color: var(--primary-light);
+        }
+
+        .checkout-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .checkout-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-item img {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            background: var(--bg-secondary);
+        }
+
+        .checkout-item-info {
+            flex: 1;
+        }
+
+        .checkout-item-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .checkout-item-qty {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        .checkout-item-price {
+            font-weight: 700;
+            color: var(--primary-light);
+            font-size: 0.9rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .summary-row.total {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: white;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-light);
+            margin-top: 0.5rem;
+        }
+
+        .summary-row.total .price {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="checkout-page">
+        <!-- Header -->
+        <div class="checkout-header">
+            <div class="container checkout-header-inner">
+
+                <div style="display:flex;align-items:center;gap:1rem">
+                    <button class="lang-toggle">EN</button>
+                    <a href="/" class="btn btn-ghost btn-sm">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span data-co-i18n="back_to_store">العودة للمتجر</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="container" style="padding-top:1.5rem">
+            <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--text-muted)">
+                <a href="/" style="color:var(--text-muted);hover:color:white">المتجر</a>
+                <span class="material-symbols-outlined" style="font-size:0.9rem">chevron_left</span>
+                <span style="color:var(--primary-light)" data-co-i18n="checkout_title">إتمام الطلب</span>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="checkout-content">
+            <div class="container">
+                <div class="checkout-grid">
+
+                    <!-- Form -->
+                    <div class="checkout-form-card">
+                        <div class="checkout-section-title">
+                            <span class="material-symbols-outlined">person</span>
+                            <span data-co-i18n="customer_info">بيانات المشتري</span>
+                        </div>
+                        <form id="checkout-form" novalidate>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label" data-co-i18n="full_name">الاسم الكامل</label>
+                                    <input type="text" id="customer-name" class="form-input"
+                                        data-co-placeholder="name_placeholder" placeholder="أدخل اسمك الكامل">
+                                    <div class="form-error" id="customer-name-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" data-co-i18n="phone">رقم الهاتف</label>
+                                    <input type="tel" id="customer-phone" class="form-input"
+                                        data-co-placeholder="phone_placeholder" placeholder="0555123456">
+                                    <div class="form-error" id="customer-phone-error"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" data-co-i18n="email">البريد الإلكتروني</label>
+                                <input type="email" id="customer-email" class="form-input"
+                                    data-co-placeholder="email_placeholder" placeholder="example@email.com">
+                                <div class="form-error" id="customer-email-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" data-co-i18n="address">العنوان</label>
+                                <textarea id="customer-address" class="form-textarea"
+                                    data-co-placeholder="address_placeholder"
+                                    placeholder="المدينة، الحي، الشارع، رقم البناء" rows="3"></textarea>
+                                <div class="form-error" id="customer-address-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" data-co-i18n="notes">ملاحظات (اختياري)</label>
+                                <textarea id="customer-notes" class="form-textarea"
+                                    data-co-placeholder="notes_placeholder" placeholder="أي ملاحظات إضافية..."
+                                    rows="2"></textarea>
+                            </div>
+
+                            <!-- Security Info -->
+                            <div
+                                style="display:flex;align-items:center;gap:0.5rem;padding:0.8rem;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius-sm);margin-bottom:1.25rem">
+                                <span class="material-symbols-outlined" style="color:#10B981;font-size:1rem">lock</span>
+                                <span style="font-size:0.8rem;color:var(--text-secondary)">
+                                    بياناتك محمية وآمنة تماماً
+                                </span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-full" id="submit-btn">
+                                <span class="material-symbols-outlined">shopping_bag</span>
+                                <span data-co-i18n="place_order">تأكيد الطلب</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="order-summary-card">
+                        <div class="checkout-section-title">
+                            <span class="material-symbols-outlined">receipt_long</span>
+                            <span data-co-i18n="order_summary">ملخص الطلب</span>
+                        </div>
+                        <div id="order-items">
+                            <!-- Rendered by JS -->
+                        </div>
+                        <div style="margin-top:1rem">
+                            <div class="summary-row">
+                                <span data-co-i18n="subtotal">المجموع الفرعي</span>
+                                <span id="order-subtotal">$0.00</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span data-co-i18n="total">الإجمالي</span>
+                                <span class="price" id="order-total">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/checkout.js"></script>
+</body>
+
+</html>

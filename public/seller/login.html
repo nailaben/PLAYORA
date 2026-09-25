@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول البائع | LogoName</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="login-page">
+        <div class="login-orb login-orb-1"></div>
+        <div class="login-orb login-orb-2"></div>
+
+        <div class="login-card">
+            <div class="login-logo">
+                <span class="text-gradient">PLAY</span><span style="color:var(--accent)">ORA</span>
+            </div>
+            <div class="login-subtitle">لوحة تحكم البائع | Seller Dashboard</div>
+
+            <div class="login-error" id="login-error" style="display:none">
+                <span class="material-symbols-outlined" style="font-size:1rem">error</span>
+                <span id="error-msg">خطأ في البريد الإلكتروني أو كلمة المرور</span>
+            </div>
+
+            <form id="login-form" novalidate>
+                <div class="form-group">
+                    <label class="form-label" for="login-email">البريد الإلكتروني</label>
+                    <div style="position:relative">
+                        <span class="material-symbols-outlined"
+                            style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1rem">email</span>
+                        <input type="email" id="login-email" class="form-input" placeholder="admin@playora.com"
+                            style="padding-right:2.5rem" autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">كلمة المرور</label>
+                    <div style="position:relative">
+                        <span class="material-symbols-outlined"
+                            style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1rem">lock</span>
+                        <input type="password" id="login-password" class="form-input" placeholder="••••••••"
+                            style="padding-right:2.5rem" autocomplete="current-password">
+                        <button type="button" id="toggle-pwd"
+                            style="position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;display:flex">
+                            <span class="material-symbols-outlined" style="font-size:1rem">visibility</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-full" id="login-btn" style="margin-top:0.5rem">
+                    <span class="material-symbols-outlined">login</span>
+                    تسجيل الدخول
+                </button>
+            </form>
+
+            <div class="divider"></div>
+            <div style="text-align:center">
+                <a href="/" class="btn btn-ghost btn-sm">
+                    <span class="material-symbols-outlined">store</span>
+                    العودة للمتجر
+                </a>
+            </div>
+
+            <!-- Demo credentials hint -->
+
+        </div>
+    </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        initLang();
+
+        // Redirect if already logged in
+        if (getToken()) window.location.href = '/seller/dashboard.html';
+
+        // Toggle password visibility
+        document.getElementById('toggle-pwd').addEventListener('click', function () {
+            const input = document.getElementById('login-password');
+            const icon = this.querySelector('.material-symbols-outlined');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility';
+            }
+        });
+
+        // Login form
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                document.getElementById('login-error').style.display = 'flex';
+                document.getElementById('error-msg').textContent = 'يرجى إدخال البريد الإلكتروني وكلمة المرور';
+                return;
+            }
+
+            const btn = document.getElementById('login-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px"></span> جاري التحقق...';
+
+            try {
+                const res = await api.login(email, password);
+
+                if (res.success) {
+                    setToken(res.token);
+                    setSeller(res.seller);
+                    window.location.href = '/seller/dashboard.html';
+                } else {
+                    document.getElementById('login-error').style.display = 'flex';
+                    document.getElementById('error-msg').textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+                    btn.disabled = false;
+                    btn.innerHTML = '<span class="material-symbols-outlined">login</span> تسجيل الدخول';
+                }
+            } catch (err) {
+                document.getElementById('login-error').style.display = 'flex';
+                document.getElementById('error-msg').textContent = 'تعذر الاتصال بالخادم، تحقق من تشغيل الخادم';
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined">login</span> تسجيل الدخول';
+            }
+        });
+    </script>
+</body>
+
+</html>

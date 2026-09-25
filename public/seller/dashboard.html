@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم |logoName
+    </title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="dashboard-layout">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-logo text-gradient">LogoName</span>
+                <span class="sidebar-tagline">لوحة تحكم البائع</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">القائمة الرئيسية</div>
+
+                <button class="nav-link active" data-tab="products" onclick="showTab('products')">
+                    <span class="material-symbols-outlined">inventory_2</span>
+                    <span data-dash-i18n="products_mgmt">إدارة المنتجات</span>
+                </button>
+
+                <button class="nav-link" data-tab="orders" onclick="showTab('orders')">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    <span data-dash-i18n="orders_mgmt">الطلبات</span>
+                    <span class="nav-badge" id="orders-badge">0</span>
+                </button>
+
+                <div class="nav-section-label">الأدوات</div>
+
+                <button class="nav-link" onclick="window.open('/', '_blank')">
+                    <span class="material-symbols-outlined">store</span>
+                    <span>عرض المتجر</span>
+                </button>
+
+                <button class="lang-toggle nav-link" style="padding:0.7rem 0.75rem;border-radius:var(--radius-sm)">
+                    <span class="material-symbols-outlined">language</span>
+                    <span>تغيير اللغة</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="seller-info">
+                    <div class="seller-avatar" id="seller-avatar">AD</div>
+                    <div>
+                        <div class="seller-name" id="seller-name">البائع</div>
+                        <div class="seller-email" id="seller-email">admin@playora.com</div>
+                    </div>
+                    <button class="logout-btn" id="logout-btn" title="تسجيل الخروج">
+                        <span class="material-symbols-outlined">logout</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN ===== -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <div style="display:flex;align-items:center;gap:1rem">
+                    <button class="mobile-menu-btn" id="mobile-menu-btn">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <span class="topbar-title" id="topbar-title">إدارة المنتجات</span>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn btn-ghost btn-sm btn-icon" id="refresh-btn" onclick="location.reload()"
+                        title="تحديث">
+                        <span class="material-symbols-outlined" style="font-size:1rem">refresh</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="dashboard-content">
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-purple">
+                            <span class="material-symbols-outlined">inventory_2</span>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="stat-products">—</div>
+                            <div class="stat-label" data-dash-i18n="total_products">إجمالي المنتجات</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-blue">
+                            <span class="material-symbols-outlined">receipt_long</span>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="stat-orders">—</div>
+                            <div class="stat-label" data-dash-i18n="total_orders">إجمالي الطلبات</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-green">
+                            <span class="material-symbols-outlined">attach_money</span>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="stat-revenue">—</div>
+                            <div class="stat-label" data-dash-i18n="total_revenue">إجمالي الإيرادات</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-amber">
+                            <span class="material-symbols-outlined">pending</span>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="stat-pending">—</div>
+                            <div class="stat-label" data-dash-i18n="pending_orders">طلبات معلقة</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== PRODUCTS TAB ===== -->
+                <div class="tab-panel active" id="tab-products">
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <div class="section-card-title">
+                                <span class="material-symbols-outlined">inventory_2</span>
+                                <span data-dash-i18n="products_mgmt">إدارة المنتجات</span>
+                            </div>
+                            <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
+                                <div style="position:relative">
+                                    <span class="material-symbols-outlined"
+                                        style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1rem">search</span>
+                                    <input type="text" id="product-search" class="form-input" placeholder="بحث..."
+                                        style="padding-right:2.5rem;width:200px">
+                                </div>
+                                <button class="btn btn-primary" id="add-product-btn" onclick="openAddProduct()">
+                                    <span class="material-symbols-outlined">add</span>
+                                    <span data-dash-i18n="add_product">إضافة منتج</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>الصورة</th>
+                                        <th>اسم المنتج</th>
+                                        <th>الفئة</th>
+                                        <th>السعر</th>
+                                        <th>الكمية</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-tbody">
+                                    <tr>
+                                        <td colspan="7" style="text-align:center;padding:3rem">
+                                            <div class="spinner" style="margin:0 auto"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ORDERS TAB ===== -->
+                <div class="tab-panel" id="tab-orders">
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <div class="section-card-title">
+                                <span class="material-symbols-outlined">receipt_long</span>
+                                <span data-dash-i18n="orders_mgmt">الطلبات</span>
+                            </div>
+                            <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                                <button class="btn btn-ghost btn-sm active" data-order-filter="all">الكل</button>
+                                <button class="btn btn-ghost btn-sm" data-order-filter="pending">معلق</button>
+                                <button class="btn btn-ghost btn-sm" data-order-filter="confirmed">مؤكد</button>
+                                <button class="btn btn-ghost btn-sm" data-order-filter="shipped">تم الشحن</button>
+                                <button class="btn btn-ghost btn-sm" data-order-filter="completed">مكتمل</button>
+                                <button class="btn btn-ghost btn-sm" data-order-filter="cancelled">ملغي</button>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الطلب</th>
+                                        <th>العميل</th>
+                                        <th>البريد الإلكتروني</th>
+                                        <th>المنتجات</th>
+                                        <th>الإجمالي</th>
+                                        <th>الحالة</th>
+                                        <th>التاريخ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-tbody">
+                                    <tr>
+                                        <td colspan="7" style="text-align:center;padding:3rem">
+                                            <div class="spinner" style="margin:0 auto"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== PRODUCT MODAL ===== -->
+    <div class="modal-overlay" id="product-modal" style="display:none">
+        <div class="modal" style="max-width:680px">
+            <div class="modal-header">
+                <span class="modal-title" id="product-modal-title">إضافة منتج جديد</span>
+                <button class="modal-close" id="close-product-modal">✕</button>
+            </div>
+
+            <form id="product-form">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                    <div class="form-group">
+                        <label class="form-label" data-dash-i18n="product_name_ar">اسم المنتج (عربي)</label>
+                        <input type="text" id="prod-name-ar" class="form-input" placeholder="مثال: بطاقة Google Play">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-dash-i18n="product_name_en">اسم المنتج (إنجليزي)</label>
+                        <input type="text" id="prod-name-en" class="form-input" placeholder="e.g. Google Play Card">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-dash-i18n="desc_ar">الوصف (عربي)</label>
+                    <textarea id="prod-desc-ar" class="form-textarea" placeholder="وصف المنتج بالعربية..."
+                        rows="2"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-dash-i18n="desc_en">الوصف (إنجليزي)</label>
+                    <textarea id="prod-desc-en" class="form-textarea" placeholder="Product description in English..."
+                        rows="2"></textarea>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+                    <div class="form-group">
+                        <label class="form-label" data-dash-i18n="price">السعر ($)</label>
+                        <input type="number" id="prod-price" class="form-input" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-dash-i18n="stock">الكمية</label>
+                        <input type="number" id="prod-stock" class="form-input" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-dash-i18n="category">الفئة</label>
+                        <select id="prod-category" class="form-select">
+                            <option value="">اختر الفئة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-dash-i18n="image">صورة المنتج</label>
+                    <div class="image-upload-area">
+                        <input type="file" id="prod-image" accept="image/*">
+                        <div class="upload-icon">
+                            <span class="material-symbols-outlined">cloud_upload</span>
+                        </div>
+                        <div class="upload-text">اسحب الصورة هنا أو انقر للاختيار (الحد الأقصى 5MB)</div>
+                        <img id="image-preview" class="upload-preview" style="display:none" alt="Preview">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-dash-i18n="image_url">أو رابط الصورة</label>
+                    <input type="url" id="prod-image-url" class="form-input" placeholder="https://...">
+                </div>
+
+                <div class="form-group" style="display:flex;align-items:center;gap:0.75rem">
+                    <input type="checkbox" id="prod-active" style="width:16px;height:16px;accent-color:var(--primary)"
+                        checked>
+                    <label for="prod-active" class="form-label" style="margin-bottom:0" data-dash-i18n="active">المنتج
+                        نشط ومرئي للعملاء</label>
+                </div>
+
+                <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:0.5rem">
+                    <button type="button" class="btn btn-ghost"
+                        onclick="document.getElementById('product-modal').style.display='none'">
+                        <span data-dash-i18n="cancel">إلغاء</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="save-product-btn">
+                        <span class="material-symbols-outlined">save</span>
+                        <span data-dash-i18n="save">حفظ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+
+</html>
