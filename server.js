@@ -45,10 +45,10 @@ app.get('*', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, async () => {
-    console.log(`\n PLAYORA Server running on http://localhost:${PORT}`);
-    console.log(` Store: http://localhost:${PORT}`);
-    console.log(`  Dashboard: http://localhost:${PORT}/seller/login.html`);
-    console.log(` API: http://localhost:${PORT}/api/health\n`);
+app.listen(PORT, '0.0.0.0', async () => {
+    console.log(`\nPLAYORA Server running on port ${PORT}`);
+    console.log(`Store: http://localhost:${PORT}`);
+    console.log(`Dashboard: http://localhost:${PORT}/seller/login.html`);
+    console.log(`API: http://localhost:${PORT}/api/health\n`);
     await testConnection();
 });

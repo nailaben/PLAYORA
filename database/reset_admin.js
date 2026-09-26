@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 async function resetAdmin() {
     try {
         const email = process.env.SELLER_EMAIL || 'admin@playora.com';
+        const username = (process.env.SELLER_USERNAME || 'charaf_ben').trim().toLowerCase();
         const password = process.env.SELLER_PASSWORD || 'admin123';
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
@@ -11,12 +12,13 @@ async function resetAdmin() {
         // Ensure seller exists or update password
         const check = await pool.query('SELECT * FROM sellers WHERE email = $1', [email]);
         if (check.rows.length > 0) {
-            await pool.query('UPDATE sellers SET password_hash = $1 WHERE email = $2', [hash, email]);
+            await pool.query('UPDATE sellers SET password_hash = $1, username = $2 WHERE email = $3', [hash, username, email]);
             console.log(`Updated password for existing seller: ${email}`);
         } else {
-            await pool.query('INSERT INTO sellers (name, email, password_hash) VALUES ($1, $2, $3)', [
+            await pool.query('INSERT INTO sellers (name, email, username, password_hash) VALUES ($1, $2, $3, $4)', [
                 'PLAYORA Admin',
                 email,
+                username,
                 hash
             ]);
             console.log(`Created new seller: ${email}`);

@@ -8,9 +8,31 @@ CREATE TABLE IF NOT EXISTS sellers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(50),
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Add usernames to existing seller accounts, using the email prefix as a starting point.
+ALTER TABLE sellers ADD COLUMN IF NOT EXISTS username VARCHAR(50);
+UPDATE sellers
+SET username = CASE
+    WHEN lower(email) = 'admin@playora.com' THEN 'charaf_ben'
+    ELSE COALESCE(NULLIF(lower(regexp_replace(split_part(email, '@', 1), '[^a-zA-Z0-9_]+', '_', 'g')), ''), 'seller')
+END
+WHERE username IS NULL;
+UPDATE sellers SET username = 'charaf_ben'
+WHERE lower(email) = 'admin@playora.com' AND username = 'admin';
+WITH duplicate_usernames AS (
+    SELECT id, username, ROW_NUMBER() OVER (PARTITION BY lower(username) ORDER BY id) AS row_num
+    FROM sellers
+)
+UPDATE sellers AS seller
+SET username = duplicate_usernames.username || seller.id::text
+FROM duplicate_usernames
+WHERE seller.id = duplicate_usernames.id AND duplicate_usernames.row_num > 1;
+ALTER TABLE sellers ALTER COLUMN username SET NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS sellers_username_lower_unique ON sellers (lower(username));
 
 -- Create categories table
 CREATE TABLE IF NOT EXISTS categories (
@@ -76,12 +98,20 @@ END;
 $$ language 'plpgsql';
 
 -- Create triggers for updated_at
-CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON products
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Create triggers for updated_at safely
+DROP TRIGGER IF EXISTS update_products_updated_at ON products;
 
-CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_products_updated_at
+BEFORE UPDATE ON products
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_orders_updated_at ON orders;
+
+CREATE TRIGGER update_orders_updated_at
+BEFORE UPDATE ON orders
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
 -- Insert default categories
 INSERT INTO categories (name_ar, name_en, icon) VALUES
     ('بطاقات رقمية', 'Digital Cards', 'credit_card'),
@@ -92,8 +122,8 @@ INSERT INTO categories (name_ar, name_en, icon) VALUES
 ON CONFLICT DO NOTHING;
 
 -- Insert default seller (password: admin123)
-INSERT INTO sellers (name, email, password_hash) VALUES
-    ('PLAYORA Admin', 'admin@playora.com', '$2a$10$LP4IPBr.AI/wi6YYfFFvne0ks8eS4iptKZll7oy5zn/31ChhxhI0S')
+INSERT INTO sellers (name, email, username, password_hash) VALUES
+    ('PLAYORA Admin', 'admin@playora.com', 'charaf_ben', '$2a$10$LP4IPBr.AI/wi6YYfFFvne0ks8eS4iptKZll7oy5zn/31ChhxhI0S')
 ON CONFLICT (email) DO NOTHING;
 
 -- Insert sample products

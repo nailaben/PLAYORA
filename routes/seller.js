@@ -7,14 +7,14 @@ require('dotenv').config();
 
 // POST /api/seller/login
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ success: false, message: 'Email and password are required' });
+    if (!username || !password) {
+        return res.status(400).json({ success: false, message: 'Username and password are required' });
     }
 
     try {
-        const result = await pool.query('SELECT * FROM sellers WHERE email = $1', [email]);
+        const result = await pool.query('SELECT * FROM sellers WHERE username = $1', [username.trim().toLowerCase()]);
         const seller = result.rows[0];
 
         if (!seller) {
@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: seller.id, email: seller.email, name: seller.name },
+            { id: seller.id, username: seller.username, email: seller.email, name: seller.name },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
         res.json({
             success: true,
             token,
-            seller: { id: seller.id, name: seller.name, email: seller.email }
+            seller: { id: seller.id, name: seller.name, username: seller.username, email: seller.email }
         });
     } catch (err) {
         console.error('Login error:', err);

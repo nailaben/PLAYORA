@@ -22,11 +22,11 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <span class="sidebar-logo text-gradient">LogoName</span>
-                <span class="sidebar-tagline">لوحة تحكم البائع</span>
+                <span class="sidebar-tagline" data-dash-i18n="seller_dashboard">لوحة تحكم البائع</span>
             </div>
 
             <nav class="sidebar-nav">
-                <div class="nav-section-label">القائمة الرئيسية</div>
+                <div class="nav-section-label" data-dash-i18n="main_menu">القائمة الرئيسية</div>
 
                 <button class="nav-link active" data-tab="products" onclick="showTab('products')">
                     <span class="material-symbols-outlined">inventory_2</span>
@@ -39,16 +39,16 @@
                     <span class="nav-badge" id="orders-badge">0</span>
                 </button>
 
-                <div class="nav-section-label">الأدوات</div>
+                <div class="nav-section-label" data-dash-i18n="tools">الأدوات</div>
 
                 <button class="nav-link" onclick="window.open('/', '_blank')">
                     <span class="material-symbols-outlined">store</span>
-                    <span>عرض المتجر</span>
+                    <span data-dash-i18n="view_store">عرض المتجر</span>
                 </button>
 
-                <button class="lang-toggle nav-link" style="padding:0.7rem 0.75rem;border-radius:var(--radius-sm)">
+                <button class="lang-toggle nav-link" type="button" aria-label="Change language" style="padding:0.7rem 0.75rem;border-radius:var(--radius-sm)">
                     <span class="material-symbols-outlined">language</span>
-                    <span>تغيير اللغة</span>
+                    <span class="language-name">العربية</span>
                 </button>
             </nav>
 
@@ -59,7 +59,7 @@
                         <div class="seller-name" id="seller-name">البائع</div>
                         <div class="seller-email" id="seller-email">admin@playora.com</div>
                     </div>
-                    <button class="logout-btn" id="logout-btn" title="تسجيل الخروج">
+                    <button class="logout-btn" id="logout-btn" title="تسجيل الخروج" aria-label="Logout">
                         <span class="material-symbols-outlined">logout</span>
                     </button>
                 </div>

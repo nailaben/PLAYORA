@@ -88,6 +88,7 @@
     <div class="success-orb success-orb-2"></div>
 
     <div class="success-card">
+        <button class="lang-toggle" type="button" aria-label="Change language" style="position:absolute;top:1rem;right:1rem">العربية</button>
         <div class="success-icon">
             <span class="material-symbols-outlined">check_circle</span>
         </div>
@@ -127,6 +128,10 @@
 <script src="/js/api.js"></script>
 <script>
     initLang();
+    document.querySelector('.lang-toggle')?.addEventListener('click', () => {
+        nextLang();
+        window.location.reload();
+    });
     const lang = currentLang;
 
     const order = JSON.parse(sessionStorage.getItem('last_order') || '{}');
@@ -164,6 +169,19 @@
             items: 'Ordered Items',
             back: 'Back to Store',
             qty: 'Qty',
+        },
+        fr: {
+            title: 'Commande confirmée ! 🎉',
+            subtitle: 'Merci ! Nous vous contacterons bientôt pour confirmer votre commande et organiser la livraison.',
+            order_num: 'Numéro de commande',
+            customer: 'Nom du client',
+            phone: 'Téléphone',
+            email: 'Adresse e-mail',
+            address: 'Adresse',
+            total: 'Montant total',
+            items: 'Articles commandés',
+            back: 'Retour à la boutique',
+            qty: 'Qté',
         }
     };
 

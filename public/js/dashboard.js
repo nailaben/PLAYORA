@@ -9,9 +9,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupSidebar();
     setupLangToggle();
     loadSellerInfo();
+    document.addEventListener('langChange', async () => {
+        applyDashboardTranslations();
+        await showTab(currentTab);
+    });
     await loadStats();
     await showTab('products');
-    document.addEventListener('langChange', () => applyDashboardTranslations());
 });
 
 // ---- Auth ----
@@ -53,7 +56,7 @@ function setupSidebar() {
 
 function setupLangToggle() {
     document.querySelectorAll('.lang-toggle').forEach(btn => {
-        btn.addEventListener('click', () => setLang(currentLang === 'ar' ? 'en' : 'ar'));
+        btn.addEventListener('click', nextLang);
     });
 }
 
@@ -96,8 +99,8 @@ async function showTab(tab) {
     document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
 
     document.getElementById('topbar-title').textContent =
-        tab === 'products' ? (currentLang === 'ar' ? 'إدارة المنتجات' : 'Products Management') :
-        tab === 'orders'   ? (currentLang === 'ar' ? 'الطلبات' : 'Orders') : 'PLAYORA';
+        tab === 'products' ? t('إدارة المنتجات', 'Products Management', 'Gestion des produits') :
+        tab === 'orders'   ? t('الطلبات', 'Orders', 'Commandes') : 'PLAYORA';
 
     if (tab === 'products') await loadProductsTable();
     if (tab === 'orders') await loadOrdersTable();
@@ -127,7 +130,7 @@ async function loadProductsTable(search = '') {
     }
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><p>${currentLang === 'ar' ? 'لا توجد منتجات' : 'No products found'}</p></div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div><p>${t('لا توجد منتجات', 'No products found', 'Aucun produit trouvé')}</p></div></td></tr>`;
         return;
     }
 
@@ -154,16 +157,16 @@ async function loadProductsTable(search = '') {
             <td>
                 <span class="badge ${p.is_active ? 'badge-success' : 'badge-danger'}">
                     ${p.is_active
-                        ? (currentLang === 'ar' ? 'نشط' : 'Active')
-                        : (currentLang === 'ar' ? 'مخفي' : 'Hidden')}
+                        ? t('نشط', 'Active', 'Actif')
+                        : t('مخفي', 'Hidden', 'Masqué')}
                 </span>
             </td>
             <td>
                 <div class="table-actions">
-                    <button class="btn btn-ghost btn-sm btn-icon" onclick="openEditProduct(${p.id})" title="${currentLang === 'ar' ? 'تعديل' : 'Edit'}">
+                    <button class="btn btn-ghost btn-sm btn-icon" onclick="openEditProduct(${p.id})" title="${t('تعديل', 'Edit', 'Modifier')}">
                         <span class="material-symbols-outlined" style="font-size:1rem">edit</span>
                     </button>
-                    <button class="btn btn-danger btn-sm btn-icon" onclick="confirmDeleteProduct(${p.id}, '${p.name_ar}')" title="${currentLang === 'ar' ? 'حذف' : 'Delete'}">
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="confirmDeleteProduct(${p.id}, '${p.name_ar}')" title="${t('حذف', 'Delete', 'Supprimer')}">
                         <span class="material-symbols-outlined" style="font-size:1rem">delete</span>
                     </button>
                 </div>
@@ -185,7 +188,7 @@ async function openAddProduct() {
     editingProductId = null;
     await loadCategoriesForForm();
     clearProductForm();
-    document.getElementById('product-modal-title').textContent = currentLang === 'ar' ? 'إضافة منتج جديد' : 'Add New Product';
+    document.getElementById('product-modal-title').textContent = t('إضافة منتج جديد', 'Add New Product', 'Ajouter un produit');
     document.getElementById('product-modal').style.display = 'flex';
 }
 
@@ -197,7 +200,7 @@ async function openEditProduct(id) {
     const product = products.find(p => p.id === id);
     if (!product) return;
 
-    document.getElementById('product-modal-title').textContent = currentLang === 'ar' ? 'تعديل المنتج' : 'Edit Product';
+    document.getElementById('product-modal-title').textContent = t('تعديل المنتج', 'Edit Product', 'Modifier le produit');
     document.getElementById('prod-name-ar').value = product.name_ar;
     document.getElementById('prod-name-en').value = product.name_en;
     document.getElementById('prod-desc-ar').value = product.description_ar || '';
@@ -225,7 +228,7 @@ async function loadCategoriesForForm() {
     }
 
     const select = document.getElementById('prod-category');
-    select.innerHTML = `<option value="">${currentLang === 'ar' ? 'اختر الفئة' : 'Select Category'}</option>` +
+    select.innerHTML = `<option value="">${t('اختر الفئة', 'Select Category', 'Choisir une catégorie')}</option>` +
         productCategories.map(c => `<option value="${c.id}">${currentLang === 'ar' ? c.name_ar : c.name_en}</option>`).join('');
 }
 
@@ -288,8 +291,8 @@ document.getElementById('product-form')?.addEventListener('submit', async (e) =>
         if (res.success) {
             showToast(
                 editingProductId
-                    ? (currentLang === 'ar' ? '✓ تم تحديث المنتج' : '✓ Product updated')
-                    : (currentLang === 'ar' ? '✓ تمت إضافة المنتج' : '✓ Product added'),
+                    ? t('✓ تم تحديث المنتج', '✓ Product updated', '✓ Produit modifié')
+                    : t('✓ تمت إضافة المنتج', '✓ Product added', '✓ Produit ajouté'),
                 'success'
             );
             document.getElementById('product-modal').style.display = 'none';
@@ -303,21 +306,19 @@ document.getElementById('product-form')?.addEventListener('submit', async (e) =>
     }
 
     btn.disabled = false;
-    btn.textContent = currentLang === 'ar' ? 'حفظ' : 'Save';
+    btn.textContent = t('حفظ', 'Save', 'Enregistrer');
 });
 
 // Delete product
 window.confirmDeleteProduct = async function(id, name) {
     const confirm = window.confirm(
-        currentLang === 'ar'
-            ? `هل تريد حذف "${name}"؟`
-            : `Delete "${name}"?`
+        t(`هل تريد حذف "${name}"؟`, `Delete "${name}"?`, `Supprimer « ${name} » ?`)
     );
     if (!confirm) return;
 
     const res = await api.deleteProduct(id);
     if (res.success) {
-        showToast(currentLang === 'ar' ? '✓ تم حذف المنتج' : '✓ Product deleted', 'success');
+        showToast(t('✓ تم حذف المنتج', '✓ Product deleted', '✓ Produit supprimé'), 'success');
         await loadProductsTable();
         await loadStats();
     } else {
@@ -338,13 +339,14 @@ async function loadOrdersTable() {
     const orders = res.orders;
 
     if (orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📋</div><p>${currentLang === 'ar' ? 'لا توجد طلبات' : 'No orders found'}</p></div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📋</div><p>${t('لا توجد طلبات', 'No orders found', 'Aucune commande trouvée')}</p></div></td></tr>`;
         return;
     }
 
     const statusLabels = {
         ar: { pending: 'قيد الانتظار', confirmed: 'مؤكد', shipped: 'تم الشحن', completed: 'مكتمل', cancelled: 'ملغي' },
-        en: { pending: 'Pending', confirmed: 'Confirmed', shipped: 'Shipped', completed: 'Completed', cancelled: 'Cancelled' }
+        en: { pending: 'Pending', confirmed: 'Confirmed', shipped: 'Shipped', completed: 'Completed', cancelled: 'Cancelled' },
+        fr: { pending: 'En attente', confirmed: 'Confirmée', shipped: 'Expédiée', completed: 'Terminée', cancelled: 'Annulée' }
     };
 
     tbody.innerHTML = orders.map(o => `
@@ -373,7 +375,7 @@ window.updateStatus = async function(orderId, status, selectEl) {
     selectEl.className = `status-select status-${status}`;
     const res = await api.updateOrderStatus(orderId, status);
     if (res.success) {
-        showToast(currentLang === 'ar' ? '✓ تم تحديث الحالة' : '✓ Status updated', 'success', 2000);
+        showToast(t('✓ تم تحديث الحالة', '✓ Status updated', '✓ Statut mis à jour'), 'success', 2000);
         await loadStats();
     } else {
         showToast('حدث خطأ', 'error');
@@ -417,6 +419,7 @@ function applyDashboardTranslations() {
                 pending_orders: 'طلبات معلقة',
                 dashboard: 'الرئيسية',
                 logout: 'تسجيل الخروج',
+                seller_dashboard: 'لوحة تحكم البائع', main_menu: 'القائمة الرئيسية', tools: 'الأدوات', view_store: 'عرض المتجر',
             },
             en: {
                 products_mgmt: 'Products Management',
@@ -440,6 +443,18 @@ function applyDashboardTranslations() {
                 pending_orders: 'Pending Orders',
                 dashboard: 'Dashboard',
                 logout: 'Logout',
+                seller_dashboard: 'Seller Dashboard', main_menu: 'Main Menu', tools: 'Tools', view_store: 'View Store',
+            },
+            fr: {
+                products_mgmt: 'Gestion des produits', orders_mgmt: 'Commandes', add_product: 'Ajouter un produit',
+                product_name_ar: 'Nom du produit (arabe)', product_name_en: 'Nom du produit (anglais)',
+                desc_ar: 'Description (arabe)', desc_en: 'Description (anglais)', price: 'Prix ($)',
+                stock: 'Quantité en stock', category: 'Catégorie', image: 'Image du produit',
+                active: 'Produit actif et visible par les clients', save: 'Enregistrer', cancel: 'Annuler',
+                image_url: 'Ou URL de l’image', total_products: 'Total des produits', total_orders: 'Total des commandes',
+                total_revenue: 'Chiffre d’affaires total', pending_orders: 'Commandes en attente',
+                dashboard: 'Tableau de bord', logout: 'Déconnexion', seller_dashboard: 'Espace vendeur',
+                main_menu: 'Menu principal', tools: 'Outils', view_store: 'Voir la boutique',
             }
         };
         el.textContent = (translations[currentLang] || translations.ar)[key] || key;

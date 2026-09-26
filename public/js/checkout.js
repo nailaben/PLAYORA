@@ -61,6 +61,31 @@ const checkoutI18n = {
         address_placeholder: 'City, District, Street, Building',
         notes_placeholder: 'Any additional notes for your order',
         qty_label: 'Qty',
+    },
+    fr: {
+        checkout_title: 'Finaliser la commande',
+        order_summary: 'Récapitulatif',
+        customer_info: 'Informations client',
+        full_name: 'Nom complet',
+        phone: 'Téléphone',
+        email: 'Adresse e-mail',
+        address: 'Adresse de livraison',
+        notes: 'Remarques (facultatif)',
+        place_order: 'Confirmer la commande',
+        subtotal: 'Sous-total',
+        total: 'Total',
+        required: 'Ce champ est obligatoire',
+        invalid_phone: 'Numéro de téléphone invalide',
+        invalid_email: 'Adresse e-mail invalide',
+        empty_cart: 'Votre panier est vide',
+        processing: 'Traitement de la commande…',
+        back_to_store: 'Retour à la boutique',
+        name_placeholder: 'Saisissez votre nom complet',
+        phone_placeholder: 'Ex. : 0555123456',
+        email_placeholder: 'exemple@email.com',
+        address_placeholder: 'Ville, quartier, rue, numéro',
+        notes_placeholder: 'Remarques supplémentaires',
+        qty_label: 'Qté',
     }
 };
 
@@ -77,7 +102,7 @@ function applyCheckoutTranslations() {
 
 function setupLangToggle() {
     document.querySelectorAll('.lang-toggle').forEach(btn => {
-        btn.addEventListener('click', () => setLang(currentLang === 'ar' ? 'en' : 'ar'));
+        btn.addEventListener('click', nextLang);
     });
 }
 

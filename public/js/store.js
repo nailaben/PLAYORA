@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupNavbar();
     setupLangToggle();
     setupCart();
+    document.addEventListener('langChange', () => { applyTranslations(); renderProducts(); renderCart(); renderCategories(); });
     await loadCategories();
     await loadProducts();
-    document.addEventListener('langChange', () => { applyTranslations(); renderProducts(); renderCart(); renderCategories(); });
 });
 
 // ---- Translations ----
@@ -43,6 +43,10 @@ const i18n = {
         no_products: 'لا توجد منتجات',
         search_placeholder: 'ابحث عن منتج...',
         store_link: 'المتجر',
+        cart_added: '✓ أُضيف إلى السلة',
+        footer_desc: 'وجهتك الأسرع والأكثر موثوقية للحصول على البطاقات الرقمية بأفضل الأسعار',
+        quick_links: 'روابط سريعة', home: 'الرئيسية', support: 'الدعم', contact: 'اتصل بنا',
+        privacy: 'سياسة الخصوصية', terms: 'شروط الاستخدام', copyright: '© 2024 PLAYORA. جميع الحقوق محفوظة.',
     },
     en: {
         hero_badge: '🌟 Your Fastest Digital Cards Destination',
@@ -67,6 +71,38 @@ const i18n = {
         no_products: 'No products found',
         search_placeholder: 'Search products...',
         store_link: 'Store',
+        cart_added: '✓ Added to cart',
+        footer_desc: 'Your fast and trusted destination for digital cards at great prices',
+        quick_links: 'Quick Links', home: 'Home', support: 'Support', contact: 'Contact us',
+        privacy: 'Privacy Policy', terms: 'Terms of Use', copyright: '© 2024 PLAYORA. All rights reserved.',
+    },
+    fr: {
+        hero_badge: '🌟 Votre destination pour les cartes numériques',
+        hero_title_1: 'Découvrez le monde des',
+        hero_title_2: 'cartes numériques',
+        hero_desc: 'Le moyen le plus rapide et simple d’obtenir des cartes Google Play, iTunes, PSN et plus encore',
+        shop_now: 'Acheter',
+        explore_cats: 'Explorer les catégories',
+        all_products: 'Tous les produits',
+        new_arrivals: 'Produits',
+        out_of_stock: 'Épuisé',
+        add_to_cart: 'Ajouter au panier',
+        cart_title: 'Panier',
+        cart_empty: 'Votre panier est vide',
+        checkout: 'Commander',
+        subtotal: 'Sous-total',
+        total: 'Total',
+        products_label: 'Produits',
+        orders_label: 'Commandes terminées',
+        customers_label: 'Clients satisfaits',
+        loading: 'Chargement…',
+        no_products: 'Aucun produit trouvé',
+        search_placeholder: 'Rechercher un produit…',
+        store_link: 'Boutique',
+        cart_added: '✓ Ajouté au panier',
+        footer_desc: 'Votre destination rapide et fiable pour des cartes numériques au meilleur prix',
+        quick_links: 'Liens rapides', home: 'Accueil', support: 'Assistance', contact: 'Nous contacter',
+        privacy: 'Politique de confidentialité', terms: 'Conditions d’utilisation', copyright: '© 2024 PLAYORA. Tous droits réservés.',
     }
 };
 
@@ -106,7 +142,7 @@ function setupNavbar() {
 
 function setupLangToggle() {
     document.querySelectorAll('.lang-toggle').forEach(btn => {
-        btn.addEventListener('click', () => setLang(currentLang === 'ar' ? 'en' : 'ar'));
+        btn.addEventListener('click', nextLang);
     });
 }
 
@@ -341,7 +377,7 @@ window.handleAddToCart = function(productId) {
     addToCart(product);
     updateCartBadge();
     showToast(
-        currentLang === 'ar' ? `✓ أُضيف إلى السلة` : `✓ Added to cart`,
+        tr('cart_added'),
         'success', 2000
     );
     if (cartOpen) renderCart();

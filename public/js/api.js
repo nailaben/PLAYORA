@@ -93,11 +93,11 @@ const api = {
     },
 
     // ---- Seller Auth ----
-    login: async (email, password) => {
+    login: async (username, password) => {
         const res = await fetch(`${API_BASE}/seller/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ username, password })
         });
         return res.json();
     },
@@ -174,17 +174,34 @@ function getCartCount() {
 function clearCart() { localStorage.removeItem('playora_cart'); }
 
 // ---- Language ----
-let currentLang = localStorage.getItem('playora_lang') || 'ar';
+const supportedLanguages = ['ar', 'fr', 'en'];
+const languageNames = { ar: 'العربية', fr: 'Français', en: 'English' };
+let currentLang = supportedLanguages.includes(localStorage.getItem('playora_lang'))
+    ? localStorage.getItem('playora_lang')
+    : 'ar';
 
 function setLang(lang) {
+    if (!supportedLanguages.includes(lang)) return;
     currentLang = lang;
     localStorage.setItem('playora_lang', lang);
     document.documentElement.lang = lang;
     document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.querySelectorAll('.lang-toggle').forEach(button => {
+        const label = button.querySelector('.language-name');
+        if (label) label.textContent = languageNames[lang];
+        else button.textContent = languageNames[lang];
+        button.setAttribute('aria-label', `Language: ${languageNames[lang]}`);
+        button.title = `Language: ${languageNames[lang]}`;
+    });
     document.dispatchEvent(new CustomEvent('langChange', { detail: lang }));
 }
 
-function t(ar, en) { return currentLang === 'ar' ? ar : en; }
+function nextLang() {
+    const index = supportedLanguages.indexOf(currentLang);
+    setLang(supportedLanguages[(index + 1) % supportedLanguages.length]);
+}
+
+function t(ar, en, fr = en) { return currentLang === 'ar' ? ar : currentLang === 'fr' ? fr : en; }
 
 function initLang() {
     const lang = localStorage.getItem('playora_lang') || 'ar';
