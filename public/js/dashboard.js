@@ -43,15 +43,21 @@ function setupSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
 
+    const closeSidebar = () => {
+        sidebar?.classList.remove('open');
+        overlay?.classList.remove('show');
+        mobileBtn?.setAttribute('aria-expanded', 'false');
+    };
+
     mobileBtn?.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('show');
+        const isOpen = sidebar.classList.toggle('open');
+        overlay.classList.toggle('show', isOpen);
+        mobileBtn.setAttribute('aria-expanded', String(isOpen));
     });
 
-    overlay?.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('show');
-    });
+    overlay?.addEventListener('click', closeSidebar);
+    sidebar?.querySelectorAll('[data-tab]').forEach(link => link.addEventListener('click', closeSidebar));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeSidebar(); });
 }
 
 function setupLangToggle() {
